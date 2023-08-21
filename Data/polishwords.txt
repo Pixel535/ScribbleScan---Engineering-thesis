@@ -1,0 +1,100 @@
+img01 Business Modeling - artefakty
+img02 następnie rozpowszechniane zostają m.in. z powodów
+img03 tradycyjnych i społecznościowych
+img04 Aby poprawić dokładność
+img05 Wyjaśnienie zachowań
+img06 Wartości średnie
+img07 Siatka dyfrakcyjna
+img08 P. Kradl, P. Kruchten " Rational Unified Process od strony teoretycznej" Roz. 1-6, 8
+img09 c) Osiągnęliśmy cele ćwiczenia
+img10 Do niepewności złożonej największy wkład wnosi niepewność
+img11 Była już późna noc, a całe niebo było pełne migających
+img12 Jeśli w tautologii rachunku zdań w miejsce dowolnych
+img13 Jeżyk Cyprian właśnie miał ułożyć się do snu
+img14 swojej norce leżącej u podnóża leśnej górki
+img15 W pewnym momencie spadł z urwiska. Jego
+img16 serwerów, co stanowiło 10% całej ówczesnej sieci ( liczonej
+img17 różnić
+img18 nazywa się hakerami. Stworzony przez grupę hakerów
+img19 Worm ) dokonał blokady połączenia ok. sześciu tysiącom
+img20 Łóżka z różnej jakości tworzyw w żółtej części miasta są
+img21 Graficzna notacja służąca do opisu procesów biznesowych, opracowana przez
+img22 już dość znane, jednak wciąż brakuje tam tych wspaniałych
+img23 bądź też powoływanie
+img24 ćmielów, które tak bardzo przypadły mi do gustu podczas
+img25 ostatniej wizyty w górach! Na szczęście pani Jadwiga,
+img26 nasza niezwykle życzliwa sąsiadka, zaproponowała nam
+img27 możliwość zakupu świeżych jajek od swoich kurek, co
+img28 wprawiło nas w prawdziwą radość.
+img29 społeczeństwa, przekazywane wartości
+img30 A Ą B C Ć D E Ę F G H I J K L Ł M N Ń O Ó P R S Ś T U W
+img31 Y Z Ź Ż
+img32 a ą b c ć d e ę f g h i j k l ł m n ń o ó p r s ś t u w y z ź ż
+img33 ą ą ą ę ę ę
+img34 J. Górski: "IO w projekcie informatycznym" Roz. 1.2, 13.4
+img35 możliwość mapowania do zorientowanych na biznes językach opartych na XML
+img36 ciężarki działa siła ciężkości skierowana do
+img37 powierzchni ziemi oraz siła naprężenia nici o przeciwnym zwrocie
+img38 Ruch jednostajnie przyśpieszony układu jest zgodnie z II zasadą dynamiki
+img39 jeśli siły działające na ciało nie równoważą się to ciało porusza
+img40 się z przyśpieszeniem wprost proporcjonalnym do siły wypadkowej a odwrotnie
+img41 przyglądając się treści podręczników z czasów PRL-u oraz
+img42 W podanym układzie występują
+img43 Próbkę germanu domieszkowanego należy umieścić wewnątrz pieca
+img44 Wartością bardziej dokładną jest
+img45 Celują
+img46 które spełnione już
+img47 Należy przygotować kompensator, dzielnik napięcia, ludane źródło
+img48 uzależnienie od narzędzi
+img49 uległ polimeryzacji gdyż 
+img50 Celem ćwiczenia jest wyznaczenie lepkości gliceryny a następnie jej stężenie
+img51 Określa on lepkość cieczy która jest wynikiem sił tarcia cząstek
+img52 Obliczam okres drgań własnych dla obu wahadeł korzystając
+img53 Najpopularniejszą techniką językowej manipulacji w reklamie
+img54 Stała określająca wielkość odkształceń które są efektem działania
+img55 sumą stronę i puścimy w tym samym momencie jedyną siłą
+img56 środków
+img57 -równomierność
+img58 -natężenie
+img59 Należy bezwzględnie unikać olśnienia, ze względu
+img60 Przy lampach narażonych na kontakt z wodą
+img61 Cykle wyznaczone przez dwa ciągi nazywamy rozłącznymi, jeśli te ciągi
+img62 a zamieszczone w protokole wartości
+img63 stosunek strumienia świetlnego wystawnego
+img64 funkcjonują pręciki. Pełnią one rolę percepcji
+img65 Trudno jest je zweryfikować, żeby
+img66 Wpływ oświetlenia zarówno wewn. jak
+img67 Często
+img68 wywarcie na odbiorcy jak najsilniejszego wrażenia
+img69 istotę niebezpiecznie bliską naturze i jej złowrogim prawą
+img70 Rachunek prawdopodobieństwa podaje metody konstrukcji przestrzeni
+img71 Zmienną losową X nazywamy zmienną losową
+img72 losowego należy zdefiniować
+img73 dowolną funkcję P określoną na S, przyjmującą wartości
+img74 Sekundy odwiedził jedną planetę, bo eksploracja tego kosmosu trwałaby
+img75 PRZESTRZEŃ PROBABILISTYCZNA
+img76 Częstość względna - częstością wyniku A nazywamy
+img77 przetestować wszystkie inne środki
+img78 częściowo nieprawdziwa wiadomość,
+img79 Cykl życia technologii/produktu:
+img80 Badania, wprowadzenie, wzrost, dojrzałość, schyłek
+img81 Innowacje technologiczne wykład
+img82 Business Modeling - czynności
+img83 Def.: Każdemu zbiorowi przyporządkowuje się pewien obiekt, zwany liczbą kardynalną
+img84 ogólne określenia
+img85 intencją wprowadzenia odbiorców w błąd w celu
+img86 elastyczność i otwartość
+img87 poradniki użytkowników narzędzi
+img88 iteracyjność
+img89 -wskazówki
+img90 w ramach przedsiębiorstwa zajmującego się tworzeniem oprogramowania.
+img91 uporządkowane przydzielanie zadań i zakresów odpowiedzialności
+img92 proces inżynierii oprogramowania, który zapewnia
+img93 Graficzna notacja służąca do opisu procesów biznesowych.
+img94 Cechy: prosta i zrozumiała notacja, elastyczność, jednoznaczność,
+img95 uniezależnienie od narzędzi, standaryzacja opisu procesów
+img96 wersjonowanie kodu
+img97 zarządzanie zadaniami
+img98 Jest on pozbawiony wielu szczegółów i cech nieistotnych z punktu
+img99 Zarządzanie wymaganiami (inżynieria wymagań)
+img100 widzenia celów modelowania.
