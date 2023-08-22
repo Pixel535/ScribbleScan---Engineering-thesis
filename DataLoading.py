@@ -87,6 +87,7 @@ class DataLoading:
         unique_characters = set()
         unique_characters = unique_characters.union(polish_text, english_text, symbols_and_numbers_text)
         max_text_length = max(max_polish_text_len, max_english_text_len, max_symbols_and_numbers_text_len)
+        unique_characters = sorted(unique_characters)
         vocab = "".join(unique_characters)
 
         return dataset, unique_characters, max_text_length, vocab

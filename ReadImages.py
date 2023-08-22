@@ -1,3 +1,5 @@
+import typing
+
 import numpy as np
 from mltu.inferenceModel import OnnxInferenceModel
 from mltu.transformers import ImageResizer
@@ -5,7 +7,7 @@ from mltu.utils.text_utils import ctc_decoder
 
 class ReadImages(OnnxInferenceModel):
 
-    def __init__(self, vocab, *args, **kwargs):
+    def __init__(self, vocab: typing.Union[str, list], *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.vocab = vocab
 

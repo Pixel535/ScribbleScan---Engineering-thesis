@@ -51,7 +51,10 @@ class TrainModel:
 
         if os.path.exists("Model/model.h5"):
             img_shape = (self.height, self.width, 3)
-            HTR_Model = load_model("Model/model.h5", custom_objects={"BatchNormalization" : BatchNormalization, "Bidirectional": Bidirectional})
+            HTR_Model = self.HTR_Model(img_shape, len(self.vocab), self.vocab)
+            HTR_Model.compile_model()
+            HTR_Model.model.load_weights("Model/model.h5")
+            print(HTR_Model.model.get_weights())
             new_model = False
         else:
             img_shape = (self.height, self.width, 3)
@@ -82,7 +85,7 @@ class TrainModel:
                                            mode='auto')
         model2onnx = Model2onnx("Model/model.h5")
 
-        is_Trained = False
+        is_Trained = True
 
         if is_Trained is False:
             if new_model is True:
