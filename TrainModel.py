@@ -14,7 +14,7 @@ except: pass
 
 class TrainModel:
     def __init__(self, dataset, unique_characters, max_text_length, vocab):
-        self.width = 800
+        self.width = 1500
         self.height = 100
 
         self.dataset = dataset
@@ -36,10 +36,10 @@ class TrainModel:
         data_provider = DataProvider(
             dataset=self.dataset,
             skip_validation=True,
-            batch_size=32,
+            batch_size=16,
             data_preprocessors=[ImageReader()],
             transformers=[
-                ImageResizer(self.width, self.height, keep_aspect_ratio=False),
+                ImageResizer(self.width, self.height, keep_aspect_ratio=True),
                 LabelIndexer(self.vocab),
                 LabelPadding(max_word_length=self.max_text_length, padding_value=len(self.vocab)),
             ],
@@ -85,7 +85,7 @@ class TrainModel:
                                            mode='auto')
         model2onnx = Model2onnx("Model/model.h5")
 
-        is_Trained = True
+        is_Trained = False
 
         if is_Trained is False:
             if new_model is True:

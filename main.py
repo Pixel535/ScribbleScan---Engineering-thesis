@@ -4,9 +4,9 @@ import pandas as pd
 from mltu.utils.text_utils import get_cer, get_wer
 from tqdm import tqdm
 from DataLoading import DataLoading
+from GUI import GUI
 from ReadImages import ReadImages
 from TrainModel import TrainModel
-
 
 def data_reading(model, df):
     acc_cer, acc_wer = [], []
@@ -31,7 +31,6 @@ def data_reading(model, df):
 
     print(f"Average CER: {np.average(acc_cer)}, Average WER: {np.average(acc_wer)}")
 
-
 if __name__ == "__main__":
 
     data_loading = DataLoading()
@@ -39,8 +38,10 @@ if __name__ == "__main__":
 
     #train_model = TrainModel(dataset, unique_characters, max_text_length, vocab)
 
-    model_path = "Model"
-    model = ReadImages(vocab=vocab, model_path=model_path)
-    df = pd.read_csv("Test Data/val.csv").values.tolist()
-    data_reading(model, df)
+    #model_path = "Model"
+    #model = ReadImages(vocab=vocab, model_path=model_path)
+    #df = pd.read_csv("Test Data/val.csv").values.tolist()
+    #data_reading(model, df)
 
+    app = GUI(vocab)
+    app.run()
