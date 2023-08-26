@@ -1,5 +1,4 @@
 import typing
-
 import numpy as np
 from mltu.inferenceModel import OnnxInferenceModel
 from mltu.transformers import ImageResizer

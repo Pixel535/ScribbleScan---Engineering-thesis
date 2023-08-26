@@ -3,8 +3,6 @@ from mltu.dataProvider import DataProvider
 from mltu.preprocessors import ImageReader
 from mltu.transformers import ImageResizer, LabelIndexer, LabelPadding
 from mltu.augmentors import RandomBrightness, RandomErodeDilate, RandomSharpen
-from keras.layers import BatchNormalization, Bidirectional
-from tensorflow.python.keras.saving.save import load_model
 from HTR_Model import HTR_Model
 from keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau, TensorBoard, BackupAndRestore
 from mltu.callbacks import Model2onnx, TrainLogger

@@ -2,7 +2,8 @@ import os.path
 import tkinter as tk
 from tkinter import filedialog, ttk
 import cv2
-from PIL import Image, ImageTk, ImageDraw, ImageFont
+import numpy as np
+from PIL import Image, ImageTk
 from autocorrect import Speller
 from ReadImages import ReadImages
 
@@ -12,7 +13,6 @@ class GUI:
         self.window.title("ScribbleScan")
         self.window.geometry("800x350")
         self.vocab = vocab
-
         self.current_page = None
 
     def run(self):
@@ -96,7 +96,6 @@ class SelectImgPage(Page):
         self.combo_box.pack()
         self.selected_language = None
 
-
         # ----- Button 2 -----
         self.go_next_button = tk.Button(self.frame, text="Go next", bg="#C1C1CD", command=self.go_next)
         self.go_next_button.pack(pady=20)
@@ -141,10 +140,16 @@ class ImgAndTextPage(Page):
         else:
             self.img_width = self.img_width
 
-        if self.img_height < 200:
+        if self.img_width > 1800:
+            self.img_width = 1750
+
+        if self.img_height < 450:
             self.img_height = self.img_height + 400
         else:
             self.img_height = self.img_height
+
+        if self.img_height > 800:
+            self.img_height = 800
 
         parent.geometry(f"{self.img_width}x{self.img_height}")
         self.image.thumbnail((800, 700))
@@ -173,10 +178,52 @@ class ImgAndTextPage(Page):
         self.button_frame.pack()
 
     def read_img(self, model, img_path):
-        image = cv2.imread(img_path)
-        predicted_text = model.predict(image)
+        lines = self.split_lines(img_path)
+        predicted_text = ""
+        for line in lines:
+            predicted_line = model.predict(line)
+            predicted_text += predicted_line + "\n"
 
         return predicted_text
+
+    def split_lines(self, image_path):
+        image = cv2.imread(image_path)
+
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        _, bin_img = cv2.threshold(gray, 200, 255, cv2.THRESH_BINARY_INV)
+
+        hor_proj = np.mean(bin_img, axis=1)
+
+        th = 0
+        hist = hor_proj <= th
+
+        ycoords = []
+        y = 0
+        count = 0
+        is_space = False
+        for i in range(len(hist)):
+            if not is_space:
+                if hist[i]:
+                    is_space = True
+                    count = 1
+                    y = i
+            else:
+                if not hist[i]:
+                    is_space = False
+                    ycoords.append(y // count)
+                else:
+                    y += i
+                    count += 1
+
+        lines = []
+        if len(ycoords) != 0:
+            for i in range(len(ycoords) - 1):
+                line = image[ycoords[i]:ycoords[i + 1], :]
+                lines.append(line)
+            lines.append(image[ycoords[-1]:, :])
+        else:
+            lines.append(image)
+        return lines
 
     def go_back(self):
         self.controller.show_select_img_page()
@@ -200,10 +247,16 @@ class CorrectedImgAndText(Page):
         else:
             self.img_width = self.img_width
 
-        if self.img_height < 200:
+        if self.img_width > 1800:
+            self.img_width = 1750
+
+        if self.img_height < 450:
             self.img_height = self.img_height + 400
         else:
             self.img_height = self.img_height
+
+        if self.img_height > 800:
+            self.img_height = 800
 
         parent.geometry(f"{self.img_width}x{self.img_height}")
 
@@ -249,24 +302,30 @@ class CorrectedImgAndText(Page):
 
         spell = Speller(lang=lang)
 
-        words = self.text.split()
+        line_texts = self.text.split('\n')
 
-        rectangles = self.find_coordinates_of_misspelled_word(self.img_path)
+        lines = self.split_lines(self.img_path)
 
-        for word, rect_coords in zip(words, rectangles):
-            corrected_word = spell(word)
-            if word != corrected_word:
-                x, y, w, h = rect_coords
-                cv2.rectangle(img, (x, y), (x + w, y + h), (0, 0, 255), 2)
-                cv2.putText(img, corrected_word, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 0), 2)
+        corrected_images = []
+        for line, line_text in zip(lines, line_texts):
+            words = line_text.split()
+            rectangles = self.find_coordinates_of_misspelled_word(line)
+            for word, rect_coords in zip(words, rectangles):
+                corrected_word = spell(word)
+                if word != corrected_word:
+                    x, y, w, h = rect_coords
+                    cv2.rectangle(line, (x, y), (x + w, y + h), (0, 0, 255), 2)
+                    cv2.putText(line, corrected_word, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 0), 2)
+            corrected_images.append(line)
 
-        img = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+        combined_image = cv2.vconcat(corrected_images)
+        img = Image.fromarray(cv2.cvtColor(combined_image, cv2.COLOR_BGR2RGB))
         img.thumbnail((800, 700))
         return ImageTk.PhotoImage(img)
 
-    def find_coordinates_of_misspelled_word(self, img_path):
-        image_cv = cv2.imread(img_path)
-        gray = cv2.cvtColor(image_cv, cv2.COLOR_BGR2GRAY)
+    def find_coordinates_of_misspelled_word(self, line):
+        rectangles = []
+        gray = cv2.cvtColor(line, cv2.COLOR_BGR2GRAY)
         blur = cv2.medianBlur(gray, 5)
         thresh = cv2.adaptiveThreshold(blur, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 11, 8)
 
@@ -276,7 +335,6 @@ class CorrectedImgAndText(Page):
         contours, _ = cv2.findContours(dilate, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         contours = sorted(contours, key=lambda c: cv2.boundingRect(c)[0])
 
-        rectangles = []
         for contour in contours:
             x, y, w, h = cv2.boundingRect(contour)
             rectangles.append((x, y, w, h))
@@ -293,14 +351,60 @@ class CorrectedImgAndText(Page):
 
         spell = Speller(lang=lang)
 
-        words = self.text.split()
+        lines = self.text.split('\n')
         corrected_words = []
-        for i, word in enumerate(words):
-            corrected_word = spell(word)
-            if word != corrected_word:
-                words[i] = corrected_word
-                corrected_words.append((word, corrected_word))
+        corrected_lines = []
+        for line in lines:
+            words = line.split()
+            for i, word in enumerate(words):
+                corrected_word = spell(word)
+                if word != corrected_word:
+                    words[i] = corrected_word
+                    corrected_words.append((word, corrected_word))
+            corrected_line = " ".join(words)
+            corrected_lines.append(corrected_line)
 
-        corrected_text = " ".join(words)
+        corrected_text = "\n".join(corrected_lines)
+
         return corrected_text, corrected_words
+
+    def split_lines(self, image_path):
+        image = cv2.imread(image_path)
+
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        _, bin_img = cv2.threshold(gray, 200, 255, cv2.THRESH_BINARY_INV)
+
+        hor_proj = np.mean(bin_img, axis=1)
+
+        th = 0
+        hist = hor_proj <= th
+
+        ycoords = []
+        y = 0
+        count = 0
+        is_space = False
+        for i in range(len(hist)):
+            if not is_space:
+                if hist[i]:
+                    is_space = True
+                    count = 1
+                    y = i
+            else:
+                if not hist[i]:
+                    is_space = False
+                    ycoords.append(y // count)
+                else:
+                    y += i
+                    count += 1
+
+        lines = []
+        if len(ycoords) != 0:
+            for i in range(len(ycoords) - 1):
+                line = image[ycoords[i]:ycoords[i + 1], :]
+                lines.append(line)
+            lines.append(image[ycoords[-1]:, :])
+        else:
+            lines.append(image)
+        return lines
+
 
