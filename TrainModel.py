@@ -34,7 +34,7 @@ class TrainModel:
         data_provider = DataProvider(
             dataset=self.dataset,
             skip_validation=True,
-            batch_size=16,
+            batch_size=8,
             data_preprocessors=[ImageReader()],
             transformers=[
                 ImageResizer(self.width, self.height, keep_aspect_ratio=True),

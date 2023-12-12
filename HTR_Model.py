@@ -1,7 +1,7 @@
 import tensorflow as tf
 from mltu.losses import CTCloss
 from mltu.metrics import CERMetric, WERMetric
-from mltu.model_utils import residual_block
+from mltu.model_utils import activation_layer
 from keras import layers
 from keras.models import Model
 try: [tf.config.experimental.set_memory_growth(gpu, True) for gpu in tf.config.experimental.list_physical_devices("GPU")]
@@ -16,31 +16,53 @@ class HTR_Model:
         self.vocab = vocab
         self.model = self.build_model()
 
-    def build_model(self, activation="leaky_relu", dropout=0.2):
+    def convolutional_block(self, x, filter_num, how_many_layers, dropout, strides_iteration_change, activation):
+
+        for i in range(how_many_layers):
+            strides = 1
+            if i in strides_iteration_change:
+                strides = 2
+            # Convolutional Layer 1
+            x = layers.Conv2D(filter_num, (5, 5), padding="same", strides=strides, kernel_initializer='he_uniform')(x)
+            x = layers.BatchNormalization()(x)
+
+            # Convolutional Layer 2
+            x = layers.Conv2D(filter_num, (3, 3), padding="same", kernel_initializer='he_uniform')(x)
+            x = layers.BatchNormalization()(x)
+
+            x = layers.Add()([x, x])
+            x = activation_layer(x, activation=activation)
+            x = layers.Dropout(dropout)(x)
+
+        return x
+
+    def dense_block(self, x, neuron_num, activation, dropout):
+
+        x = layers.Dense(neuron_num)(x)
+        x = activation_layer(x, activation=activation)
+        x = layers.Dropout(dropout)(x)
+
+        return x
+
+    def build_model(self, activation="leaky_relu", dropout=0.1):
         data = layers.Input(name='input', shape=self.img_shape)
         data_norm = layers.Lambda(lambda x: x / 255)(data)
 
-        res_block1 = residual_block(data_norm, 32, activation=activation, skip_conv=True, strides=1, dropout=dropout)
-        res_block1 = residual_block(res_block1, 32, activation=activation, skip_conv=True, strides=2, dropout=dropout)
-        res_block1 = residual_block(res_block1, 32, activation=activation, skip_conv=False, strides=1, dropout=dropout)
+        # Convolutional Blocks
+        conv_block1 = self.convolutional_block(data_norm, 32, how_many_layers=3, dropout=dropout, strides_iteration_change=[1], activation=activation)
+        conv_block2 = self.convolutional_block(conv_block1, 64, how_many_layers=2, dropout=dropout, strides_iteration_change=[0], activation=activation)
+        conv_block3 = self.convolutional_block(conv_block2, 128, how_many_layers=4, dropout=dropout, strides_iteration_change=[0, 2], activation=activation)
+        conv_block4 = self.convolutional_block(conv_block3, 256, how_many_layers=1, dropout=dropout, strides_iteration_change=[2], activation=activation)
 
-        res_block2 = residual_block(res_block1, 64, activation=activation, skip_conv=True, strides=2, dropout=dropout)
-        res_block2 = residual_block(res_block2, 64, activation=activation, skip_conv=False, strides=1, dropout=dropout)
+        # Reshaping
+        reshape = layers.Reshape((conv_block4.shape[-3] * conv_block4.shape[-2], conv_block4.shape[-1]))(conv_block4)
+        dropout_layer = layers.Dropout(dropout)(reshape)
 
-        res_block3 = residual_block(res_block2, 128, activation=activation, skip_conv=True, strides=2, dropout=dropout)
-        res_block3 = residual_block(res_block3, 128, activation=activation, skip_conv=True, strides=1, dropout=dropout)
-        res_block3 = residual_block(res_block3, 128, activation=activation, skip_conv=True, strides=2, dropout=dropout)
-        res_block3 = residual_block(res_block3, 128, activation=activation, skip_conv=False, strides=1, dropout=dropout)
+        # Dense Blocks
+        dense_block1 = self.dense_block(x=dropout_layer, neuron_num=512, activation=activation, dropout=dropout)
+        dense_block2 = self.dense_block(x=dense_block1, neuron_num=256, activation=activation, dropout=dropout)
 
-        reshape = layers.Reshape((res_block3.shape[-3] * res_block3.shape[-2], res_block3.shape[-1]))(res_block3)
-
-        LSTM1 = layers.Bidirectional(layers.LSTM(256, return_sequences=True))(reshape)
-        LSTM1 = layers.Dropout(dropout)(LSTM1)
-
-        LSTM2 = layers.Bidirectional(layers.LSTM(64, return_sequences=True))(LSTM1)
-        LSTM2 = layers.Dropout(dropout)(LSTM2)
-
-        output = layers.Dense(self.characters_num + 1, activation="softmax", name="output")(LSTM2)
+        output = layers.Dense(self.characters_num + 1, activation="softmax", name="output")(dense_block2)
 
         model = Model(inputs=data, outputs=output)
 

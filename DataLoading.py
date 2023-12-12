@@ -52,18 +52,16 @@ class DataLoading:
 
 
     def load_data(self):
-        #polish_dataset, polish_text, max_polish_text_len = self.prepare_polish_data()
+        polish_dataset, polish_text, max_polish_text_len = self.prepare_polish_data()
         english_dataset, english_text, max_english_text_len = self.prepare_english_data()
 
         dataset = []
-        #dataset.extend(polish_dataset)
+        dataset.extend(polish_dataset)
         dataset.extend(english_dataset)
 
         unique_characters = set()
-        #unique_characters = unique_characters.union(polish_text, english_text, symbols_and_numbers_text)
-        #max_text_length = max(max_polish_text_len, max_english_text_len, max_symbols_and_numbers_text_len)
-        unique_characters = unique_characters.union(english_text)
-        max_text_length = max(max_english_text_len, 1)
+        unique_characters = unique_characters.union(polish_text, english_text)
+        max_text_length = max(max_polish_text_len, max_english_text_len)
         unique_characters = sorted(unique_characters)
         vocab = "".join(unique_characters)
 
