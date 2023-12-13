@@ -7,11 +7,6 @@ from PIL import Image, ImageTk
 from ReadImages import ReadImages
 import enchant
 
-def convet_to_black_and_white(img_path):
-    obraz = cv2.imread(img_path)
-    obraz_szary = cv2.cvtColor(obraz, cv2.COLOR_BGR2GRAY)
-    czarno_bialy_z_wzmacnianiem = cv2.addWeighted(obraz_szary, 1.15, obraz_szary, 0, 0)
-    cv2.imwrite(img_path, czarno_bialy_z_wzmacnianiem)
 
 class GUI:
     def __init__(self, vocab):
@@ -298,7 +293,6 @@ class CorrectedImgAndText(Page):
         self.controller.show_select_img_page()
 
     def mark_errors(self):
-        img = cv2.imread(self.img_path)
         lang = None
 
         if self.selected_language == "English US":
@@ -346,7 +340,47 @@ class CorrectedImgAndText(Page):
 
         for contour in contours:
             x, y, w, h = cv2.boundingRect(contour)
-            rectangles.append((x, y, w, h))
+
+            max_distance = 20
+
+            updated = False
+            for i, rect in enumerate(rectangles):
+                rx, ry, rw, rh = rect
+
+                # if rectangle is touching other rectangle
+                if ((rx <= x <= rx + rw or rx <= x + w <= rx + rw) and (ry <= y <= ry + rh or ry <= y + h <= ry + rh)):
+                    rectangles[i] = (min(x, rx), min(y, ry), max(x + w, rx + rw) - min(x, rx), max(y + h, ry + rh) - min(y, ry))
+                    updated = True
+                    break
+
+                # if rectangle is really close to other rectangle
+                if ((x >= rx - max_distance and x <= rx + rw + max_distance and y >= ry - max_distance and y <= ry + rh + max_distance) or
+                     (x + w >= rx - max_distance and x + w <= rx + rw + max_distance and y >= ry - max_distance and y <= ry + rh + max_distance) or
+                     (x >= rx - max_distance and x <= rx + rw + max_distance and y + h >= ry - max_distance and y + h <= ry + rh + max_distance) or
+                     (x + w >= rx - max_distance and x + w <= rx + rw + max_distance and y + h >= ry - max_distance and y + h <= ry + rh + max_distance)):
+                    rectangles[i] = (min(x, rx), min(y, ry), max(x + w, rx + rw) - min(x, rx), max(y + h, ry + rh) - min(y, ry))
+                    updated = True
+                    break
+
+                # if rectangle has crossed  other rectangle
+                if ((rx < x < rx + rw or x < rx < x + w) and (ry < y < ry + rh or y < ry < y + h)):
+                    rectangles[i] = (min(x, rx), min(y, ry), max(x + w, rx + rw) - min(x, rx), max(y + h, ry + rh) - min(y, ry))
+                    updated = True
+                    break
+
+                # if rectangle is inside other rectangle
+                if (rx <= x and ry <= y and rx + rw >= x + w and ry + rh >= y + h):
+                    updated = True
+                    break
+
+                # if rectangle has other rectangle inside
+                if (x <= rx and y <= ry and x + w >= rx + rw and y + h >= ry + rh):
+                    rectangles[i] = (x, y, w, h)
+                    updated = True
+                    break
+
+            if not updated:
+                rectangles.append((x, y, w, h))
 
         return rectangles
 

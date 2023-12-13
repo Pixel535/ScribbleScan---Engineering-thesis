@@ -2,7 +2,6 @@ import tensorflow as tf
 from DataLoading import DataLoading
 from GUI import GUI
 from Graphs import Graphs
-from ReadImages import ReadImages
 from TrainModel import TrainModel
 
 if __name__ == "__main__":
@@ -20,9 +19,6 @@ if __name__ == "__main__":
     if not is_model_trained:
         train_model = TrainModel(dataset, unique_characters, max_text_length, vocab)
     else:
-        model_path = "Model"
-        model = ReadImages(vocab=vocab, model_path=model_path)
-
         logs_path = "Model/logs.log"
         Graphs(logs_path)
 
