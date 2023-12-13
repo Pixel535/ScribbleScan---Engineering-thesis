@@ -4,8 +4,14 @@ from tkinter import filedialog, ttk
 import cv2
 import numpy as np
 from PIL import Image, ImageTk
-from autocorrect import Speller
 from ReadImages import ReadImages
+import enchant
+
+def convet_to_black_and_white(img_path):
+    obraz = cv2.imread(img_path)
+    obraz_szary = cv2.cvtColor(obraz, cv2.COLOR_BGR2GRAY)
+    czarno_bialy_z_wzmacnianiem = cv2.addWeighted(obraz_szary, 1.15, obraz_szary, 0, 0)
+    cv2.imwrite(img_path, czarno_bialy_z_wzmacnianiem)
 
 class GUI:
     def __init__(self, vocab):
@@ -91,7 +97,7 @@ class SelectImgPage(Page):
 
         self.combo_value = tk.StringVar()
 
-        values = ['English', 'Polish']
+        values = ['English US', 'English GB', 'Polish']
         self.combo_box = ttk.Combobox(self.frame, textvariable=self.combo_value, state='readonly', values=values)
         self.combo_box.pack()
         self.selected_language = None
@@ -295,24 +301,27 @@ class CorrectedImgAndText(Page):
         img = cv2.imread(self.img_path)
         lang = None
 
-        if self.selected_language == "English":
-            lang = "en"
+        if self.selected_language == "English US":
+            lang = "en_US"
+        elif self.selected_language == "English GB":
+            lang = "en_GB"
         elif self.selected_language == "Polish":
-            lang = "pl"
+            lang = "pl_PL"
 
-        spell = Speller(lang=lang)
+        dictionary = enchant.DictWithPWL(lang)
 
         line_texts = self.text.split('\n')
-
         lines = self.split_lines(self.img_path)
 
         corrected_images = []
+
         for line, line_text in zip(lines, line_texts):
             words = line_text.split()
             rectangles = self.find_coordinates_of_misspelled_word(line)
             for word, rect_coords in zip(words, rectangles):
-                corrected_word = spell(word)
-                if word != corrected_word:
+                if not dictionary.check(word):
+                    suggestions = dictionary.suggest(word)
+                    corrected_word = suggestions[0] if suggestions else word
                     x, y, w, h = rect_coords
                     cv2.rectangle(line, (x, y), (x + w, y + h), (0, 0, 255), 2)
                     cv2.putText(line, corrected_word, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 0), 2)
@@ -344,21 +353,25 @@ class CorrectedImgAndText(Page):
     def correct_text_with_errors(self):
         lang = None
 
-        if self.selected_language == "English":
-            lang = "en"
+        if self.selected_language == "English US":
+            lang = "en_US"
+        elif self.selected_language == "English GB":
+            lang = "en_GB"
         elif self.selected_language == "Polish":
-            lang = "pl"
+            lang = "pl_PL"
 
-        spell = Speller(lang=lang)
+        dictionary = enchant.DictWithPWL(lang)
 
         lines = self.text.split('\n')
         corrected_words = []
         corrected_lines = []
+
         for line in lines:
             words = line.split()
             for i, word in enumerate(words):
-                corrected_word = spell(word)
-                if word != corrected_word:
+                if not dictionary.check(word):
+                    suggestions = dictionary.suggest(word)
+                    corrected_word = suggestions[0] if suggestions else word
                     words[i] = corrected_word
                     corrected_words.append((word, corrected_word))
             corrected_line = " ".join(words)
