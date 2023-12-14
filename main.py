@@ -1,6 +1,6 @@
 import tensorflow as tf
 from DataLoading import DataLoading
-from GUI import GUI
+from GUI import GUI_Class
 from Graphs import Graphs
 from TrainModel import TrainModel
 
@@ -22,7 +22,7 @@ if __name__ == "__main__":
         logs_path = "Model/logs.log"
         Graphs(logs_path)
 
-        app = GUI(vocab)
+        app = GUI_Class(vocab)
         app.run()
 
 
