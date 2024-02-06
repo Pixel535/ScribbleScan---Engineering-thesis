@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-from mpldatacursor import datacursor
 
 class Graphs:
     def __init__(self, logs_path):
