@@ -2,12 +2,15 @@
 The project was done as part of my Engineering Thesis for the Military University of Technology
 
 # Description
-The application works on the basis of an HTR model I created, which uses neural networks. At the beginning, 
-the application asks the user to upload an image for text analysis and to select the language in which the text 
-is located (the application currently supports Polish and English). The application then reads out the text in 
-the photo using a previously created and trained HTR model. The user can correct the text if it has been misread by 
-the application, and then, after the text has been sent, the application displays the sent photo with the spelling mistake 
-highlighted and provides suggestions for the correct word. In addition, the app corrects the text according to the suggestions and shows the mistakes the user has made. 
+The application works on the basis of an HTR model I created, which uses neural networks. 
+The whole model accepts as training data a set of IAMs and its own created set of images in Polish. 
+Upon start-up, the application asks the user to upload an image for text analysis and to select the language in 
+which the text is located (the application currently supports Polish and English). The application then reads 
+out the text in the photo using a previously created and trained HTR model. The user can correct the text if 
+it has been misread by the application, and then, after the text has been sent, the application displays the 
+sent photo with the spelling mistake highlighted and provides suggestions for the correct word. In addition, 
+the app corrects the text according to the suggestions and shows the mistakes the user has made. The application 
+will only work properly if images of a scan of handwritten text with a thick black marker are uploaded to it. 
 
 # Screen demo
 * Home Screen
